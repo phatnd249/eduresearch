@@ -296,11 +296,11 @@ exports.importResponses = async (req, res) => {
   let insertedCount = 0;
   try {
     for (const item of items) {
-      const role = item.role || 'Giảng viên';
-      const unit = item.unit || 'Khoa CNTT';
-      const institution = item.institution || 'Trường Đại học';
+      const role = item.role || 'Người tham gia';
+      const unit = item.unit || 'Khoa / Đơn vị';
+      const institution = item.institution || 'Trường Đại học Lạc Hồng';
       const gender = item.gender || 'Nam';
-      const time_taken = item.time_taken || '2p 30s';
+      const time_taken = item.time_taken || '3 phút';
       const status = normalizeStatus(item.status);
       let answersJson = '{}';
       if (typeof item.answers === 'object' && item.answers !== null) {

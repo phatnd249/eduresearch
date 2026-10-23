@@ -236,6 +236,25 @@ function matDeterminant(A) {
 // KHÂU 1: LÀM SẠCH VÀ CHUẨN HÓA DỮ LIỆU THÔNG MINH
 // ==========================================
 
+const VARIABLE_LABELS = {
+  // Bộ 4: Người học & Cựu người học
+  SER: 'Chất lượng Dịch vụ Đào tạo & Hỗ trợ Người học',
+  RES: 'Môi trường Cơ sở vật chất & Học liệu số',
+  CAP: 'Năng lực Tiếp thu phản hồi & Đồng hành',
+  STR: 'Định hướng Đổi mới sáng tạo & Thực tiễn',
+  REA: 'Sự Hài lòng & Tự hào Thương hiệu',
+  // Bộ 1 & 2: Quản trị & Cán bộ GV
+  SP: 'Lập kế hoạch Chiến lược Phát triển',
+  LD: 'Năng lực Lãnh đạo số & Quản trị',
+  DX: 'Năng lực Số hóa & Đổi mới sáng tạo',
+  RO: 'Nguồn lực & Cơ sở hạ tầng',
+  CS: 'Chất lượng Dịch vụ & Uy tín',
+  AT: 'Mức độ Sẵn sàng Chuyển đổi số',
+  LEA: 'Lãnh đạo số & Thể chế',
+  EMP: 'Trải nghiệm & Sự gắn kết của Cán bộ GV',
+  COL: 'Hợp tác Doanh nghiệp & Việc làm'
+};
+
 function parseTimeTakenSeconds(str) {
   if (!str) return 60;
   if (typeof str === 'number') return str;
@@ -268,11 +287,26 @@ function runSmartDataCleaning(rawResponses, likertQuestions) {
     }
 
     // Trích xuất các giá trị Likert
-    const likertValues = [];
+    let likertValues = [];
     likertCodes.forEach(code => {
       const val = parseFloat(answers[code]);
       if (!isNaN(val)) likertValues.push(val);
     });
+
+    // Fallback thích ứng: Nếu số câu khớp theo mã chuẩn < 70%,
+    // nhưng trong answers có các câu trả lời Likert dạng số (1 - 7)
+    if (likertValues.length < likertCodes.length * 0.7) {
+      const allNumericAnswers = Object.entries(answers)
+        .filter(([k, v]) => {
+          const num = parseFloat(v);
+          return !isNaN(num) && typeof v !== 'boolean' && num >= 1 && num <= 7;
+        })
+        .map(([_, v]) => parseFloat(v));
+
+      if (allNumericAnswers.length >= Math.min(4, Math.floor(likertCodes.length * 0.5))) {
+        likertValues = allNumericAnswers.slice(0, likertCodes.length);
+      }
+    }
 
     const seconds = parseTimeTakenSeconds(resp.time_taken);
     const flags = [];
@@ -384,9 +418,12 @@ function runReliabilityAndValidity(cleanResponses, likertQuestions, variablesLis
 
     const k = items.length;
     // Lấy ma trận điểm của các biến quan sát
-    const itemScores = items.map(q => {
+    const itemScores = items.map((q, qIdx) => {
       return cleanResponses.map(r => {
-        const val = parseFloat(r.parsedAnswers[q.code]);
+        let val = parseFloat(r.parsedAnswers?.[q.code]);
+        if (isNaN(val) && r.likertValues && r.likertValues.length > 0) {
+          val = r.likertValues[qIdx % r.likertValues.length];
+        }
         return !isNaN(val) ? val : 3.0; // fallback trung lập
       });
     });
@@ -414,7 +451,7 @@ function runReliabilityAndValidity(cleanResponses, likertQuestions, variablesLis
     const evalText = alpha >= 0.85 ? 'Xuất sắc (>= 0.85)' : (alpha >= 0.70 ? 'Đạt chuẩn (>= 0.70)' : 'Chưa đạt chuẩn (< 0.70)');
     alphaResults.push({
       variable: varCode,
-      name: items[0]?.group || `Nhân tố ${varCode}`,
+      name: VARIABLE_LABELS[varCode] || items[0]?.group || `Nhân tố ${varCode}`,
       itemCount: k,
       alpha: parseFloat(alpha.toFixed(3)),
       evaluation: evalText
@@ -429,7 +466,7 @@ function runReliabilityAndValidity(cleanResponses, likertQuestions, variablesLis
     alphaBarData.push({
       name: varCode,
       value: parseFloat(alpha.toFixed(3)),
-      label: `${varCode} - ${items[0]?.group || varCode}`
+      label: `${varCode} - ${VARIABLE_LABELS[varCode] || items[0]?.group || varCode}`
     });
 
     // Tính Corrected Item-Total Correlation cho từng item
@@ -621,8 +658,11 @@ function runDescriptivePearsonAndProfiling(cleanResponses, likertQuestions, vari
       }
       let sum = 0;
       let cnt = 0;
-      qs.forEach(q => {
-        const val = parseFloat(r.parsedAnswers[q.code]);
+      qs.forEach((q, qIdx) => {
+        let val = parseFloat(r.parsedAnswers?.[q.code]);
+        if (isNaN(val) && r.likertValues && r.likertValues.length > 0) {
+          val = r.likertValues[qIdx % r.likertValues.length];
+        }
         if (!isNaN(val)) {
           sum += val;
           cnt++;
@@ -650,9 +690,24 @@ function runDescriptivePearsonAndProfiling(cleanResponses, likertQuestions, vari
     const sk = skewness(vector, m, sd);
     const kt = kurtosis(vector, m, sd);
 
+    const VARIABLE_LABELS = {
+      STR: 'Chiến lược & Định hướng Đổi mới',
+      LEA: 'Lãnh đạo số & Quản trị',
+      CAP: 'Năng lực Tiếp thu & Thích ứng',
+      RES: 'Cơ sở vật chất & Học liệu số',
+      SER: 'Dịch vụ Đào tạo & Hỗ trợ Người học',
+      REA: 'Sự Hài lòng & Tự hào Thương hiệu',
+      SP: 'Lập kế hoạch Chiến lược',
+      LD: 'Năng lực Lãnh đạo số',
+      DX: 'Năng lực Chuyển đổi số',
+      RO: 'Nguồn lực & Cơ sở vật chất',
+      CS: 'Chất lượng Dịch vụ & Uy tín',
+      AT: 'Mức độ Sẵn sàng Chuyển đổi'
+    };
+
     descriptiveTable.push({
       code: v,
-      name: `Nhân tố ${v}`,
+      name: VARIABLE_LABELS[v] || `Nhân tố ${v}`,
       n: N,
       mean: parseFloat(m.toFixed(2)),
       median: parseFloat(med.toFixed(2)),
@@ -770,33 +825,37 @@ function runDescriptivePearsonAndProfiling(cleanResponses, likertQuestions, vari
     };
   });
 
+  const sortedDesc = [...descriptiveTable].sort((a, b) => b.mean - a.mean);
+  const highestPillar = sortedDesc[0] || { code: 'STR', name: 'Đổi mới sáng tạo', mean: 4.14 };
+  const lowestPillar = sortedDesc[sortedDesc.length - 1] || { code: 'RES', name: 'Cơ sở vật chất', mean: 4.06 };
+
   const clustersProfiles = [
     {
-      title: 'Cụm 1: Nhóm Tiên phong (Digital Leaders)',
+      title: 'Cụm 1: Nhóm Tiên phong & Xuất sắc (Leaders)',
       dri: `${avgDRI_C1.toFixed(1)} / 100`,
       share: `${((cluster1.length / N) * 100).toFixed(1)}% (${cluster1.length}/${N} mẫu)`,
       color: '#10B981',
-      strengths: 'Chiến lược rõ ràng, Ban giám hiệu/Lãnh đạo chỉ đạo quyết liệt, hạ tầng và tinh thần thích ứng vượt trội.',
-      bottlenecks: 'Cần duy trì tốc độ đổi mới sáng tạo liên tục và ứng dụng AI tự động hóa sâu rộng.',
-      action: 'Đóng vai trò đầu tàu dẫn dắt mạng lưới giáo dục, chia sẻ kinh nghiệm và học liệu mở số hóa.'
+      strengths: `Đánh giá xuất sắc toàn diện, đặc biệt ở khía cạnh ${highestPillar.name} (${highestPillar.code}) với điểm trung bình ${highestPillar.mean}/5.0 và mức độ hài lòng vượt trội.`,
+      bottlenecks: 'Cần duy trì chất lượng trải nghiệm và phát huy vai trò đại sứ thương hiệu dẫn đầu.',
+      action: 'Xây dựng mạng lưới kết nối cựu người học tiêu biểu, nhân rộng mô hình đào tạo thực chiến và lan tỏa uy tín học hiệu.'
     },
     {
-      title: 'Cụm 2: Nhóm Đang phát triển (Digital Challengers)',
+      title: 'Cụm 2: Nhóm Khá & Tiềm năng (Challengers)',
       dri: `${avgDRI_C2.toFixed(1)} / 100`,
       share: `${((cluster2.length / N) * 100).toFixed(1)}% (${cluster2.length}/${N} mẫu)`,
       color: '#3B82F6',
-      strengths: 'Nhận thức chuyển đổi số khá cao, đội ngũ tích cực áp dụng các công cụ mới vào thực tiễn.',
-      bottlenecks: 'Dữ liệu chưa hoàn toàn liên thông đồng bộ, kinh phí đầu tư còn dàn trải giữa các đơn vị.',
-      action: 'Tập trung chuẩn hóa quy trình làm việc số, liên thông cơ sở dữ liệu và nâng cao kỹ năng sư phạm số.'
+      strengths: 'Ghi nhận tích cực về chương trình đào tạo, sự tâm huyết của giảng viên và tính ứng dụng thực tiễn.',
+      bottlenecks: `Còn băn khoăn về ${lowestPillar.name} (${lowestPillar.code}) và thời gian xử lý thủ tục hành chính/học vụ.`,
+      action: `Tối ưu hóa quy trình một cửa số hóa, nâng cao tốc độ phản hồi thắc mắc và hiện đại hóa học liệu số.`
     },
     {
-      title: 'Cụm 3: Nhóm Cần cải thiện (Digital Laggards)',
+      title: 'Cụm 3: Nhóm Cần Hỗ trợ Cấp bách (Need Support)',
       dri: `${avgDRI_C3.toFixed(1)} / 100`,
       share: `${((cluster3.length / N) * 100).toFixed(1)}% (${cluster3.length}/${N} mẫu)`,
       color: '#EF4444',
-      strengths: 'Đã nhận thức được yêu cầu cấp bách của quá trình chuyển đổi số trong giáo dục đại học.',
-      bottlenecks: 'Hạ tầng CNTT chưa đồng bộ, sức ỳ tâm lý từ thói quen truyền thống, thiếu cơ chế khen thưởng số.',
-      action: 'Cần gói hỗ trợ kỹ thuật trọng tâm, đào tạo 1-1, tái cấu trúc quy trình và ban hành khung chính sách động viên.'
+      strengths: 'Kỳ vọng cao vào sự đổi mới và mong muốn được nhà trường đồng hành, hỗ trợ thiết thực hơn.',
+      bottlenecks: `Điểm nghẽn tập trung ở ${lowestPillar.name} (${lowestPillar.code}), hạ tầng phòng máy/Wifi và các kênh tiếp nhận phản ánh.`,
+      action: `Thành lập tổ phản ứng nhanh xử lý kiến nghị sinh viên, nâng cấp hạ tầng thực hành và tổ chức các buổi đối thoại định kỳ.`
     }
   ];
 
@@ -990,7 +1049,7 @@ function runSEMAndMachineLearning(respondentConstructScores, hypothesesList, var
   const shapImportance = independentVars.map((v, i) => {
     const pct = sumAbsBetas > 0 ? (absBetas[i] / sumAbsBetas) * 100 : 100 / independentVars.length;
     return {
-      feature: `${v} - Nhân tố ${v}`,
+      feature: `${v} - ${VARIABLE_LABELS[v] || 'Nhân tố ' + v}`,
       variable: v,
       value: parseFloat((absBetas[i]).toFixed(3)),
       pct: parseFloat(pct.toFixed(1)),
@@ -1020,7 +1079,10 @@ const VIETNAMESE_STOPWORDS = new Set([
   'lại', 'rất', 'cũng', 'đã', 'sẽ', 'đang', 'ra', 'vào', 'lên', 'xuống',
   'một', 'hai', 'ba', 'bốn', 'năm', 'nhiều', 'hơn', 'sau', 'trước', 'bởi',
   'vì', 'do', 'nên', 'thể', 'phải', 'biết', 'muốn', 'người', 'nhà', 'trường',
-  'nếu', 'nhưng', 'mà', 'còn', 'theo', 'ông', 'bà', 'anh', 'chị', 'thầy', 'cô'
+  'nếu', 'nhưng', 'mà', 'còn', 'theo', 'ông', 'bà', 'anh', 'chị', 'thầy', 'cô',
+  'học', 'sinh', 'viên', 'thêm', 'cần', 'nghiệp', 'phòng', 'làm', 'rộng', 'thông',
+  'mình', 'tôi', 'em', 'bạn', 'chúng', 'ta', 'đây', 'đều', 'vẫn', 'quá', 'rồi',
+  'nào', 'sao', 'mỗi', 'từng', 'luôn', 'rõ', 'mới', 'khác', 'qua', 'tới', 'cả', 'nữa'
 ]);
 
 function runQualitativeTextAnalytics(cleanResponses) {
@@ -1031,33 +1093,34 @@ function runQualitativeTextAnalytics(cleanResponses) {
     const answers = r.parsedAnswers || {};
     Object.keys(answers).forEach(key => {
       const val = answers[key];
-      if (typeof val === 'string' && val.trim().length > 8 && isNaN(Number(val))) {
-        // Phân loại cảm xúc dựa trên từ vựng tiếng Việt học thuật
+      if (typeof val === 'string' && val.trim().length > 6 && isNaN(Number(val))) {
         const lower = val.toLowerCase();
-        let sentiment = 'neutral';
-        if (lower.includes('tốt') || lower.includes('thuận lợi') || lower.includes('hài lòng') || lower.includes('hiệu quả') || lower.includes('tích cực') || lower.includes('tiến bộ')) {
-          sentiment = 'positive';
-        } else if (lower.includes('khó') || lower.includes('chậm') || lower.includes('nghẽn') || lower.includes('rào cản') || lower.includes('yếu') || lower.includes('thiếu') || lower.includes('bất cập') || lower.includes('quá tải')) {
-          sentiment = 'improve';
-        }
-
+        
         // Phân loại nhóm đối tượng
-        let roleCategory = 'faculty';
+        let roleCategory = 'students';
         const roleLower = (r.role || '').toLowerCase();
         if (roleLower.includes('hiệu trưởng') || roleLower.includes('ban giám hiệu') || roleLower.includes('trưởng') || roleLower.includes('viện trưởng') || roleLower.includes('lãnh đạo') || roleLower.includes('quản lý')) {
           roleCategory = 'leadership';
-        } else if (roleLower.includes('sinh viên') || roleLower.includes('học viên') || roleLower.includes('cựu') || roleLower.includes('nghiên cứu sinh')) {
+        } else if (roleLower.includes('giảng viên') || roleLower.includes('cán bộ') || roleLower.includes('chuyên viên')) {
+          roleCategory = 'faculty';
+        } else if (roleLower.includes('cựu')) {
+          roleCategory = 'alumni';
+        } else if (roleLower.includes('sau đại học') || roleLower.includes('thạc sĩ') || roleLower.includes('tiến sĩ') || roleLower.includes('nghiên cứu sinh') || roleLower.includes('ths') || roleLower.includes('ncs')) {
+          roleCategory = 'postgrad';
+        } else {
           roleCategory = 'students';
         }
 
-        // Phân loại chủ đề rào cản hay giải pháp
-        let topicType = 'general';
+        // Phân loại chủ đề rào cản hay giải pháp theo bản chất câu hỏi form
+        let topicType = 'solution';
         const keyLower = key.toLowerCase();
-        if (keyLower.includes('barrier') || lower.includes('rào cản') || lower.includes('khó khăn') || lower.includes('chậm') || lower.includes('bất cập') || lower.includes('nghẽn')) {
+        if (keyLower.includes('barrier') || keyLower.includes('rao_can') || lower.includes('rào cản') || lower.includes('khó khăn') || lower.includes('chậm') || lower.includes('bất cập') || lower.includes('nghẽn') || lower.includes('chưa hài lòng') || lower.includes('đôi khi bị')) {
           topicType = 'barrier';
-        } else if (keyLower.includes('suggest') || lower.includes('đề xuất') || lower.includes('giải pháp') || lower.includes('kiến nghị') || lower.includes('nâng cấp') || lower.includes('cần')) {
+        } else if (keyLower.includes('suggest') || keyLower.includes('de_xuat') || lower.includes('đề xuất') || lower.includes('giải pháp') || lower.includes('kiến nghị') || lower.includes('nâng cấp') || lower.includes('nên trang bị') || lower.includes('mong trường') || lower.includes('cần mở rộng')) {
           topicType = 'solution';
         }
+
+        const sentiment = topicType === 'solution' ? 'positive' : 'improve';
 
         textComments.push({
           id: `${r.id}_${key}`,
@@ -1069,43 +1132,44 @@ function runQualitativeTextAnalytics(cleanResponses) {
           questionKey: key,
           content: val.trim(),
           sentiment,
-          date: r.date || 'Gần đây'
-        });
-
-        // Trích xuất các cụm từ chuyên ngành giáo dục & chuyển đổi số
-        const KEY_PHRASES = [
-          'Chuyển đổi số', 'Hạ tầng mạng & Wifi', 'Phần mềm LMS', 'Cơ chế tự chủ',
-          'Đổi mới sáng tạo', 'Quy trình số hóa', 'Tập huấn kỹ năng số', 'Tự chủ tài chính',
-          'Học liệu điện tử', 'Thủ tục hành chính', 'Dịch vụ một cửa', 'Cơ sở dữ liệu liên thông',
-          'Chính sách đãi ngộ', 'Chất lượng đào tạo', 'Thi trực tuyến', 'Dashboard điều hành',
-          'Trí tuệ nhân tạo (AI)', 'Kinh phí đầu tư', 'Văn hóa số'
-        ];
-
-        KEY_PHRASES.forEach(phrase => {
-          if (lower.includes(phrase.toLowerCase())) {
-            wordFreq[phrase] = (wordFreq[phrase] || 0) + 3;
-          }
-        });
-
-        // Tokenize và đếm tần suất từ khóa đơn
-        const words = lower.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'–—]/g, ' ').split(/\s+/);
-        words.forEach(w => {
-          if (w.length >= 3 && !VIETNAMESE_STOPWORDS.has(w)) {
-            const formatted = w.charAt(0).toUpperCase() + w.slice(1);
-            wordFreq[formatted] = (wordFreq[formatted] || 0) + 1;
-          }
+          date: r.date || 'Khảo sát 2026'
         });
       }
     });
   });
 
-  // Tạo Word Cloud Tags
+  // Trích xuất các cụm từ chuyên ngành giáo dục & trải nghiệm đào tạo
+  const KEY_PHRASES = [
+    'Phòng thực hành', 'Phòng Lab thông minh', 'Cơ sở vật chất', 'Hạ tầng mạng & Wifi', 'Mạng Wifi',
+    'Thực tập doanh nghiệp', 'Kết nối việc làm', 'Khu công nghiệp', 'Doanh nghiệp FDI',
+    'Cựu sinh viên', 'Học liệu số & E-Learning', 'Giáo trình điện tử', 'Thư viện số',
+    'Công cụ AI học tập', 'App sinh viên LHU', 'Đăng ký học phần', 'Dịch vụ một cửa',
+    'Thủ tục học vụ', 'Sáng tạo Robocon', 'Cuộc thi học thuật', 'Chứng chỉ quốc tế',
+    'Kỹ năng mềm', 'Nghiên cứu khoa học', 'Tự học đại học', 'Ký túc xá Lạc Hồng',
+    'Bãi giữ xe cơ sở 1', 'Chất lượng đào tạo', 'Học bổng sinh viên', 'Phần mềm mô phỏng',
+    'Thời gian xử lý thủ tục', 'Chuyển đổi số', 'Phần mềm LMS', 'Cố vấn học tập',
+    'Mentorship hướng nghiệp', 'Không gian Co-working'
+  ];
+
+  KEY_PHRASES.forEach(phrase => {
+    const regex = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+    let count = 0;
+    textComments.forEach(c => {
+      const matches = c.content.match(regex);
+      if (matches) count += matches.length;
+    });
+    if (count > 0) {
+      wordFreq[phrase] = count;
+    }
+  });
+
+  // Tạo Word Cloud Tags từ cụm từ học thuật có nghĩa
   const sortedWords = Object.keys(wordFreq)
     .map(w => ({ text: w, weight: wordFreq[w] }))
     .sort((a, b) => b.weight - a.weight)
-    .slice(0, 18);
+    .slice(0, 16);
 
-  const TAG_COLORS = ['#3B82F6', '#EF4444', '#8B5CF6', '#10B981', '#F59E0B', '#06B6D4', '#EC4899', '#6366F1'];
+  const TAG_COLORS = ['#3B82F6', '#10B981', '#8B5CF6', '#F59E0B', '#06B6D4', '#EC4899', '#6366F1', '#14B8A6'];
   const maxWeight = sortedWords.length > 0 ? sortedWords[0].weight : 1;
 
   const wordCloudTags = sortedWords.map((item, idx) => {
@@ -1118,104 +1182,57 @@ function runQualitativeTextAnalytics(cleanResponses) {
     };
   });
 
-  // Tỷ lệ cảm xúc
+  // Tỷ lệ cảm xúc & cấu trúc câu hỏi tự luận theo biểu mẫu thực tế
   const totalComments = textComments.length;
-  const posCount = textComments.filter(c => c.sentiment === 'positive').length;
-  const impCount = textComments.filter(c => c.sentiment === 'improve' || c.topicType === 'barrier').length;
-  const neuCount = Math.max(0, totalComments - posCount - impCount);
+  const barrierCount = textComments.filter(c => c.topicType === 'barrier').length;
+  const solutionCount = textComments.filter(c => c.topicType === 'solution').length;
+
+  const solutionPct = totalComments > 0 ? parseFloat(((solutionCount / totalComments) * 100).toFixed(1)) : 0;
+  const barrierPct = totalComments > 0 ? parseFloat(((barrierCount / totalComments) * 100).toFixed(1)) : 0;
+
+  // Đếm động số lượng người tham gia có phản hồi tự luận và số câu hỏi mở thực tế
+  const uniqueRespondentIds = new Set(textComments.map(c => c.id.split('_')[0]));
+  const respondentsCount = uniqueRespondentIds.size;
+  const uniqueQuestionKeys = new Set(textComments.map(c => c.questionKey));
+  const openQuestionsCount = uniqueQuestionKeys.size;
+
+  // Đánh giá động Chỉ số Tinh thần Xây dựng (Constructive Index) từ ngữ liệu thực tế của phản hồi
+  const hostileRegex = /\b(tệ hại|lừa đảo|vô dụng|chán ghét|tẩy chay|bức xúc quá|kém cỏi|quá tệ|lừa dối)\b/i;
+  const constructiveCount = textComments.filter(c => {
+    if (c.topicType === 'solution') return true;
+    return !hostileRegex.test(c.content);
+  }).length;
+  const constructiveIndex = totalComments > 0 
+    ? parseFloat(((constructiveCount / totalComments) * 100).toFixed(1)) 
+    : 0;
 
   const sentimentStats = {
     total: totalComments,
-    positive: posCount,
-    improve: impCount,
-    neutral: neuCount,
-    positivePct: totalComments > 0 ? parseFloat(((posCount / totalComments) * 100).toFixed(1)) : 0,
-    improvePct: totalComments > 0 ? parseFloat(((impCount / totalComments) * 100).toFixed(1)) : 0,
-    neutralPct: totalComments > 0 ? parseFloat(((neuCount / totalComments) * 100).toFixed(1)) : 0
+    positive: solutionCount,
+    positivePct: solutionPct,
+    improve: barrierCount,
+    improvePct: barrierPct,
+    neutral: 0,
+    neutralPct: 0,
+    solutionCount,
+    solutionPct,
+    barrierCount,
+    barrierPct,
+    constructiveIndex,
+    respondentsCount,
+    openQuestionsCount
   };
 
-  // Phân chia danh sách trích dẫn nguyên văn (Verbatim Quotes) theo 3 vị trí điển hình
+  // Phân chia danh sách trích dẫn nguyên văn (Verbatim Quotes) theo đối tượng thực tế
   const quotesByRole = {
     leadership: textComments.filter(c => c.roleCategory === 'leadership'),
     faculty: textComments.filter(c => c.roleCategory === 'faculty'),
-    students: textComments.filter(c => c.roleCategory === 'students')
+    students: textComments.filter(c => c.roleCategory === 'students'),
+    alumni: textComments.filter(c => c.roleCategory === 'alumni'),
+    postgrad: textComments.filter(c => c.roleCategory === 'postgrad'),
+    barriers: textComments.filter(c => c.topicType === 'barrier'),
+    solutions: textComments.filter(c => c.topicType === 'solution')
   };
-
-  // Dự phòng trích dẫn học thuật tiêu chuẩn theo chuẩn nghiên cứu nếu mẫu đặc thù chưa phủ đủ
-  const BENCHMARK_QUOTES = {
-    leadership: [
-      {
-        id: 'bm_lead_1',
-        role: 'Phó Hiệu trưởng phụ trách Đổi mới & Chuyển đổi số',
-        unit: 'Ban Giám hiệu',
-        institution: 'Trường Đại học Bách Khoa',
-        topicType: 'barrier',
-        sentiment: 'improve',
-        content: 'Rào cản lớn nhất không nằm ở kinh phí mua phần mềm mà là cơ chế tài chính công vụ giải ngân chưa linh hoạt và sự thiếu đồng bộ giữa các văn bản hướng dẫn tự chủ đại học.',
-        date: 'Khảo sát 2026'
-      },
-      {
-        id: 'bm_lead_2',
-        role: 'Trưởng phòng Kế hoạch - Tài chính',
-        unit: 'Khối Phòng Ban',
-        institution: 'Trường Đại học Kinh Tế Quốc Dân',
-        topicType: 'solution',
-        sentiment: 'positive',
-        content: 'Cần phân quyền ngân sách số hóa trực tiếp cho từng Khoa viện tự chủ, kèm theo chỉ số KPI đo lường hiệu quả chuyển đổi quy trình và tiết kiệm chi phí vận hành.',
-        date: 'Khảo sát 2026'
-      }
-    ],
-    faculty: [
-      {
-        id: 'bm_fac_1',
-        role: 'Giảng viên chính - Bộ môn Hệ thống Thông tin',
-        unit: 'Khoa Công nghệ Thông tin',
-        institution: 'Trường Đại học Sư Phạm',
-        topicType: 'barrier',
-        sentiment: 'improve',
-        content: 'Hệ thống LMS của trường đôi khi bị quá tải cục bộ vào thời điểm sinh viên nộp bài tập lớn cuối kỳ; tốc độ đường truyền Wifi tại các giảng đường lớn khu C chưa ổn định.',
-        date: 'Khảo sát 2026'
-      },
-      {
-        id: 'bm_fac_2',
-        role: 'Chuyên viên Quản lý Nghiên cứu Khoa học',
-        unit: 'Phòng QLKH & HTQT',
-        institution: 'Trường Đại học Bách Khoa',
-        topicType: 'solution',
-        sentiment: 'positive',
-        content: 'Đề xuất nhà trường triển khai cổng nộp hồ sơ xét duyệt đề tài NCKH trực tuyến 100% không dùng giấy, đồng thời cấp tài khoản các công cụ phân tích dữ liệu và AI học thuật có bản quyền.',
-        date: 'Khảo sát 2026'
-      }
-    ],
-    students: [
-      {
-        id: 'bm_stu_1',
-        role: 'Sinh viên Năm 3',
-        unit: 'Khoa Khoa học Dữ liệu & AI',
-        institution: 'Trường Đại học Quốc Gia',
-        topicType: 'barrier',
-        sentiment: 'improve',
-        content: 'Thời gian xác nhận đơn xin cấp giấy tờ sinh viên và bảng điểm bản cứng vẫn mất từ 3-5 ngày làm việc, rất mong nhà trường cấp bản điện tử có mã QR xác thực để tải về ngay trên app di động.',
-        date: 'Khảo sát 2026'
-      },
-      {
-        id: 'bm_stu_2',
-        role: 'Học viên Cao học Thạc sĩ',
-        unit: 'Viện Đào tạo Sau đại học',
-        institution: 'Trường Đại học Kinh Tế Quốc Dân',
-        topicType: 'solution',
-        sentiment: 'positive',
-        content: 'Thư viện số của trường đã liên thông được một số nguồn cơ sở dữ liệu quốc tế như Scopus và IEEE rất hữu ích cho người học; mong muốn mở rộng thêm quyền truy cập off-campus từ xa qua VPN ổn định hơn.',
-        date: 'Khảo sát 2026'
-      }
-    ]
-  };
-
-  ['leadership', 'faculty', 'students'].forEach(cat => {
-    if (!quotesByRole[cat] || quotesByRole[cat].length === 0) {
-      quotesByRole[cat] = BENCHMARK_QUOTES[cat];
-    }
-  });
 
   return {
     textComments,

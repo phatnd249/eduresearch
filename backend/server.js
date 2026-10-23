@@ -43,9 +43,9 @@ app.use(cors({
   credentials: true,
 }));
 
-// Giới hạn kích thước payload JSON và form body tránh DoS (L3)
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Giới hạn kích thước payload JSON và form body hỗ trợ import CSV lớn
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Middleware làm sạch dữ liệu đầu vào chống Stored & Reflected XSS (M4)
 app.use(sanitizeMiddleware);
@@ -96,7 +96,7 @@ app.use('/api/responses', responseRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/users', userRoutes);
 
-// Centralized Error-handling Middleware (L2)
+// Centralized Error-handling Middleware (L2) returning JSON
 app.use((err, req, res, next) => {
   console.error('[UNHANDLED ERROR LOG]', {
     timestamp: new Date().toISOString(),
@@ -110,7 +110,7 @@ app.use((err, req, res, next) => {
   const isProd = process.env.NODE_ENV === 'production';
   const safeMessage = isProd && statusCode === 500
     ? 'Đã có lỗi xảy ra trên hệ thống. Vui lòng thử lại sau.'
-    : (err.message || 'Đã có lỗi xảy ra.');
+    : (err.message || 'Đã có lỗi xảy ra trên máy chủ.');
 
   res.status(statusCode).json({ error: safeMessage });
 });

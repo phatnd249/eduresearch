@@ -35,18 +35,28 @@ const fetchAPI = async (endpoint, options = {}) => {
       },
     });
 
-    let data = {};
-    try {
-      data = await response.json();
-    } catch (_) {
-      data = {};
+    const contentType = response.headers.get('content-type') || '';
+    let data;
+    if (contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (_) {
+        data = {};
+      }
+    } else {
+      const text = await response.text();
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { error: !response.ok ? `Lỗi máy chủ (${response.status}): ${text.slice(0, 150)}` : text };
+      }
     }
 
     if (!response.ok) {
       if (response.status === 502 || response.status === 503 || response.status === 504) {
         throw new Error('Máy chủ đang thức dậy sau thời gian nghỉ (Render cold-start). Xin vui lòng thử lại sau vài giây!');
       }
-      throw new Error(data.error || `Yêu cầu thất bại (Mã lỗi: ${response.status})`);
+      throw new Error(data.error || data.message || `Yêu cầu thất bại (Mã lỗi: ${response.status})`);
     }
     return data;
   } catch (err) {

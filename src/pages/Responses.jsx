@@ -269,19 +269,35 @@ const Responses = () => {
     }
   };
 
-  // Tải file mẫu CSV
+  // Tải file mẫu CSV theo đúng khảo sát đang chọn
   const handleDownloadTemplate = () => {
-    const headers = 'role,unit,institution,gender,time_taken,status,STR1,STR2,LEA1,LEA2,CAP1,CAP2,RES1,RES2,SER1,REA1,TXT_BARRIER,TXT_SUGGESTION';
-    const sampleRow1 = 'Trưởng Khoa,Khoa CNTT,Trường Đại học Sư phạm Hà Nội,Nam,4 phút 20 giây,valid,4,4,5,4,5,4,4,5,4,4,"Cần nâng cấp hạ tầng mạng","Mở thêm các khóa tập huấn kỹ năng số"';
-    const sampleRow2 = 'Giảng viên,Khoa Kinh tế,Trường Đại học Sư phạm Hà Nội,Nữ,5 phút 10 giây,valid,5,5,4,5,5,5,4,5,5,5,"Hệ thống LMS cần đồng bộ điểm tự động","Cải tiến quy trình số hóa"';
+    const targetId = importSurveyId || selectedSurveyId;
+    const currentSurvey = surveys.find(s => s.id.toString() === targetId?.toString()) || surveys[0];
+    
+    let likertCodes = [];
+    if (currentSurvey && currentSurvey.questions) {
+      const qs = typeof currentSurvey.questions === 'string' ? JSON.parse(currentSurvey.questions) : currentSurvey.questions;
+      likertCodes = qs.filter(q => !q.type || q.type === 'likert').map(q => q.code);
+    }
+    if (likertCodes.length === 0) {
+      likertCodes = ['SER1', 'SER2', 'SER3', 'SER4', 'RES1', 'RES2', 'CAP1', 'STR1', 'REA1', 'REA2'];
+    }
+
+    const headers = ['role', 'unit', 'institution', 'gender', 'time_taken', 'status', ...likertCodes, 'TXT_BARRIER', 'TXT_SUGGESTION'].join(',');
+    const sampleScores1 = likertCodes.map(() => 4).join(',');
+    const sampleScores2 = likertCodes.map(() => 5).join(',');
+    const instName = currentSurvey?.institution || 'Trường Đại học Lạc Hồng';
+    const sampleRow1 = `Sinh viên đang theo học (Năm 1 - 2),Khoa Công nghệ Thông tin,"${instName}",Nam,4 phút 20 giây,valid,${sampleScores1},"Cần nâng cấp hạ tầng mạng Wifi","Tăng cường các buổi tọa đàm với chuyên gia doanh nghiệp"`;
+    const sampleRow2 = `Sinh viên đang theo học (Năm 3 - 4),Khoa Quản trị - Kinh tế Quốc tế,"${instName}",Nữ,5 phút 10 giây,valid,${sampleScores2},"Hệ thống LMS cần đồng bộ bài thi nhanh hơn","Mở rộng không gian Co-working space 24/7"`;
+    
     const csvContent = '\uFEFF' + [headers, sampleRow1, sampleRow2].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'mau_nhap_lieu_phan_hoi_eduresearch.csv';
+    link.download = `mau_nhap_lieu_khao_sat_${currentSurvey?.id || 'eduresearch'}.csv`;
     link.click();
-    showToast('Đã tải xuống file CSV mẫu!');
+    showToast('Đã tải xuống file CSV mẫu theo chuẩn câu hỏi của khảo sát!');
   };
 
   // Parse CSV text sang danh sách đối tượng
