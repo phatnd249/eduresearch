@@ -1,7 +1,17 @@
+import { isTokenExpired } from '../utils/token';
+
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');
+  if (token && isTokenExpired(token)) {
+    localStorage.removeItem('token');
+    window.dispatchEvent(new CustomEvent('auth:expired', {
+      detail: { message: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' }
+    }));
+    return { 'Content-Type': 'application/json' };
+  }
+
   const headers = {
     'Content-Type': 'application/json',
   };
@@ -56,6 +66,27 @@ const fetchAPI = async (endpoint, options = {}) => {
       if (response.status === 502 || response.status === 503 || response.status === 504) {
         throw new Error('Máy chủ đang thức dậy sau thời gian nghỉ (Render cold-start). Xin vui lòng thử lại sau vài giây!');
       }
+
+      // Tự động phát hiện token hết hạn hoặc phiên bị thu hồi từ phía server
+      const isPublicAuthEndpoint = endpoint.startsWith('/auth/login') ||
+                                   endpoint.startsWith('/auth/register') ||
+                                   endpoint.startsWith('/auth/forgot-password') ||
+                                   endpoint.startsWith('/auth/reset-password');
+
+      const isTokenInvalid = response.status === 401 || (
+        response.status === 403 && (
+          typeof data.error === 'string' && /token|hết hạn|thu hồi|unauthorized/i.test(data.error)
+        )
+      );
+
+      if (!isPublicAuthEndpoint && isTokenInvalid) {
+        localStorage.removeItem('token');
+        const reason = data.error || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+        window.dispatchEvent(new CustomEvent('auth:expired', {
+          detail: { message: reason }
+        }));
+      }
+
       throw new Error(data.error || data.message || `Yêu cầu thất bại (Mã lỗi: ${response.status})`);
     }
     return data;
@@ -139,6 +170,12 @@ export const documentsAPI = {
       });
       const data = await response.json();
       if (!response.ok) {
+        if (response.status === 401 || (response.status === 403 && typeof data.error === 'string' && /token|hết hạn/i.test(data.error))) {
+          localStorage.removeItem('token');
+          window.dispatchEvent(new CustomEvent('auth:expired', {
+            detail: { message: data.error || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' }
+          }));
+        }
         throw new Error(data.error || 'Đã có lỗi xảy ra');
       }
       return data;
@@ -162,6 +199,12 @@ export const documentsAPI = {
       });
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
+        if (response.status === 401 || (response.status === 403 && typeof err.error === 'string' && /token|hết hạn/i.test(err.error))) {
+          localStorage.removeItem('token');
+          window.dispatchEvent(new CustomEvent('auth:expired', {
+            detail: { message: err.error || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' }
+          }));
+        }
         throw new Error(err.error || 'Lỗi khi tải file');
       }
       const blob = await response.blob();

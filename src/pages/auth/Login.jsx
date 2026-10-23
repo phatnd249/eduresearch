@@ -7,19 +7,27 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isWakingUp, setIsWakingUp] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  // Tự động gửi ping nhẹ đánh thức Render container ngay khi người dùng vừa mở trang login
+  // Tự động gửi ping nhẹ đánh thức Render container ngay khi người dùng vừa mở trang login,
+  // đồng thời hiển thị thông báo nếu người dùng vừa bị tự động đăng xuất do hết hạn token
   useEffect(() => {
     pingServer();
+    const storedNotice = sessionStorage.getItem('auth_notice');
+    if (storedNotice) {
+      setNotice(storedNotice);
+      sessionStorage.removeItem('auth_notice');
+    }
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setNotice('');
     setIsLoading(true);
     setIsWakingUp(false);
 
@@ -47,6 +55,24 @@ const Login = () => {
     <div>
       <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem', textAlign: 'center' }}>Đăng nhập</h2>
       
+      {notice && (
+        <div style={{ 
+          padding: '0.75rem 1rem', 
+          backgroundColor: '#FEF3C7', 
+          color: '#92400E', 
+          border: '1px solid #FCD34D', 
+          borderRadius: 'var(--radius-md)', 
+          marginBottom: '1rem', 
+          fontSize: '0.875rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          <span style={{ fontSize: '1rem' }}>⚠️</span>
+          <span>{notice}</span>
+        </div>
+      )}
+
       {error && (
         <div style={{ padding: '0.75rem', backgroundColor: '#FEE2E2', color: '#EF4444', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.875rem' }}>
           {error}
