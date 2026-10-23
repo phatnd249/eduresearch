@@ -53,6 +53,10 @@ const Analytics = () => {
     setTimeout(() => setToast({ message: '', type: 'success' }), 3000);
   };
 
+  const activeSampleSize = analysisData?.metadata?.sampleSizeActive
+    ?? analysisData?.khau1_cleaning?.cleanCount
+    ?? 0;
+
   // 1. Tải danh sách khảo sát khi khởi tạo
   useEffect(() => {
     const loadSurveys = async () => {
@@ -842,14 +846,14 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
           {/* ========================================================= */}
           {activeStage === 2 && (
             <div style={{ animation: 'fadeIn 0.25s ease' }}>
-              {(analysisData.khau2_reliability?.insufficientData || (analysisData.khau1_cleaning?.cleanCount || 0) < 2) ? (
+              {analysisData.khau2_reliability?.insufficientData ? (
                 <div className="card" style={{ padding: '2.5rem', textAlign: 'center', marginBottom: '2rem' }}>
                   <AlertTriangle size={48} color="#F59E0B" style={{ margin: '0 auto 1rem auto' }} />
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Chưa đủ dữ liệu sạch để kiểm định Khâu 2 (Độ tin cậy &amp; Giá trị thang đo)
+                    Chưa đủ dữ liệu để kiểm định Khâu 2 (Độ tin cậy &amp; Giá trị thang đo)
                   </h3>
                   <p style={{ color: 'var(--text-muted)', maxWidth: '580px', margin: '0 auto 1.5rem auto' }}>
-                    Khảo sát hiện có <b>{analysisData.khau1_cleaning?.cleanCount || 0} phiếu sạch</b> sau khi lọc rác (chuẩn học thuật APA 7 yêu cầu tối thiểu 2 phiếu sạch để tính hệ số Cronbach's Alpha, tương quan biến - tổng ITC và ma trận xoay EFA).
+                    Khảo sát hiện có <b>{activeSampleSize} phiếu</b> đưa vào phân tích (chuẩn học thuật APA 7 yêu cầu tối thiểu 2 phiếu để tính hệ số Cronbach's Alpha, tương quan biến - tổng ITC và ma trận xoay EFA).
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button className="btn btn-primary" onClick={handleSeedResponses} disabled={analyzing}>
@@ -1053,14 +1057,14 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
           {/* ========================================================= */}
           {activeStage === 3 && (
             <div style={{ animation: 'fadeIn 0.25s ease' }}>
-              {(analysisData.khau3_descriptive?.insufficientData || (analysisData.khau1_cleaning?.cleanCount || 0) < 2) ? (
+              {analysisData.khau3_descriptive?.insufficientData ? (
                 <div className="card" style={{ padding: '2.5rem', textAlign: 'center', marginBottom: '2rem' }}>
                   <AlertTriangle size={48} color="#F59E0B" style={{ margin: '0 auto 1rem auto' }} />
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                    Chưa đủ dữ liệu sạch để chạy Khâu 3 (Thống kê mô tả &amp; Phân cụm DRI)
+                    Chưa đủ dữ liệu để chạy Khâu 3 (Thống kê mô tả &amp; Phân cụm DRI)
                   </h3>
                   <p style={{ color: 'var(--text-muted)', maxWidth: '580px', margin: '0 auto 1.5rem auto' }}>
-                    Khảo sát hiện có <b>{analysisData.khau1_cleaning?.cleanCount || 0} phiếu sạch</b> sau khi lọc rác (chuẩn học thuật APA 7 yêu cầu tối thiểu 2 phiếu sạch để tính Mean, SD, Skewness, Kurtosis và ma trận tương quan Pearson).
+                    Khảo sát hiện có <b>{activeSampleSize} phiếu</b> đưa vào phân tích (chuẩn học thuật APA 7 yêu cầu tối thiểu 2 phiếu để tính Mean, SD, Skewness, Kurtosis và ma trận tương quan Pearson).
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button className="btn btn-primary" onClick={handleSeedResponses} disabled={analyzing}>
@@ -1283,14 +1287,14 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
           {/* ========================================================= */}
           {activeStage === 4 && (
             <div style={{ animation: 'fadeIn 0.25s ease' }}>
-              {(analysisData.khau4_sem_ml?.insufficientData || (analysisData.khau1_cleaning?.cleanCount || 0) < 3) ? (
+              {analysisData.khau4_sem_ml?.insufficientData ? (
                 <div className="card" style={{ padding: '2.5rem', textAlign: 'center', marginBottom: '2rem' }}>
                   <AlertTriangle size={48} color="#F59E0B" style={{ margin: '0 auto 1rem auto' }} />
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
                     Chưa đủ dữ liệu để chạy Khâu 4 (Mô hình PLS-SEM &amp; Học máy XGBoost/SHAP)
                   </h3>
                   <p style={{ color: 'var(--text-muted)', maxWidth: '580px', margin: '0 auto 1.5rem auto' }}>
-                    Khảo sát hiện có <b>{analysisData.khau1_cleaning?.cleanCount || 0} phiếu sạch</b> sau khi lọc rác (mô hình hồi quy đa biến và máy học yêu cầu tối thiểu 3 phản hồi hợp lệ để ước lượng hệ số Beta, T-statistic và độ quan trọng SHAP).
+                    Khảo sát hiện có <b>{activeSampleSize} phiếu</b> đưa vào phân tích (mô hình hồi quy đa biến và máy học yêu cầu tối thiểu 3 phản hồi hợp lệ để ước lượng hệ số Beta, T-statistic và độ quan trọng SHAP).
                   </p>
                   <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                     <button className="btn btn-primary" onClick={handleSeedResponses} disabled={analyzing}>

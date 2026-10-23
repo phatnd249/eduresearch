@@ -842,6 +842,18 @@ function runSEMAndMachineLearning(respondentConstructScores, hypothesesList, var
   const independentVars = variablesList.filter(v => v !== dependentVar);
   const p = independentVars.length;
 
+  if (p === 0) {
+    return {
+      error: 'Không đủ biến độc lập để kiểm định SEM và huấn luyện mô hình học máy.',
+      insufficientData: true,
+      dependentVar,
+      modelR2: 0,
+      hypothesisResults: [],
+      mlBenchmark: [],
+      shapImportance: []
+    };
+  }
+
   // Chuẩn bị ma trận X (Independent) và vector Y (Dependent)
   const Y = respondentConstructScores.map(row => row[dependentVar] || 3.0);
   const my = mean(Y);
@@ -1232,18 +1244,39 @@ function runCompleteAcademicPipeline(survey, rawResponses, options = { filterOut
     hypotheses = [];
   }
 
-  const variablesList = survey.variables
-    ? (Array.isArray(survey.variables) ? survey.variables : survey.variables.split(',').map(v => v.trim()).filter(Boolean))
-    : ['STR', 'LEA', 'CAP', 'RES', 'SER', 'REA'];
+  let variablesList = [];
+  if (Array.isArray(survey.variables)) {
+    variablesList = survey.variables.map(v => String(v).trim()).filter(Boolean);
+  } else if (typeof survey.variables === 'string' && survey.variables.trim()) {
+    const rawVariables = survey.variables.trim();
+    if (rawVariables.startsWith('[')) {
+      try {
+        const parsedVariables = JSON.parse(rawVariables);
+        if (Array.isArray(parsedVariables)) {
+          variablesList = parsedVariables.map(v => String(v).trim()).filter(Boolean);
+        }
+      } catch {
+        variablesList = [];
+      }
+    } else {
+      variablesList = rawVariables.split(',').map(v => v.trim()).filter(Boolean);
+    }
+  }
+  if (variablesList.length === 0) {
+    variablesList = ['STR', 'LEA', 'CAP', 'RES', 'SER', 'REA'];
+  }
 
   const likertQuestions = questions.filter(q => !q.type || q.type === 'likert');
 
   // KHÂU 1: SMART DATA CLEANING
   const cleaningResults = runSmartDataCleaning(rawResponses, likertQuestions);
-  const activeDataset = options.filterOutliers ? cleaningResults.cleanedResponses : rawResponses.map(r => ({
-    ...r,
-    parsedAnswers: typeof r.answers === 'string' ? JSON.parse(r.answers || '{}') : (r.answers || {})
-  }));
+  const activeDataset = options.filterOutliers ? cleaningResults.cleanedResponses : rawResponses.map(r => {
+    let parsedAnswers = r.answers || {};
+    if (typeof parsedAnswers === 'string') {
+      try { parsedAnswers = JSON.parse(parsedAnswers); } catch { parsedAnswers = {}; }
+    }
+    return { ...r, parsedAnswers };
+  });
 
   // KHÂU 2: CRONBACH'S ALPHA, EFA & KMO
   const reliabilityResults = runReliabilityAndValidity(activeDataset, likertQuestions, variablesList);
@@ -1278,6 +1311,7 @@ function runCompleteAcademicPipeline(survey, rawResponses, options = { filterOut
       standard: 'APA 7th Edition',
       sampleSizeRaw: cleaningResults.rawCount,
       sampleSizeClean: cleaningResults.cleanCount,
+      sampleSizeActive: activeDataset.length,
       filterApplied: options.filterOutliers
     }
   };
