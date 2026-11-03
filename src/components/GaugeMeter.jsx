@@ -44,7 +44,7 @@ const GaugeMeter = ({ score = 78.5, size = 260, title = 'Chỉ số Sẵn sàng 
   const ny = cy + needleLength * Math.sin(rad);
 
   return (
-    <div style={{
+    <div className="gauge-meter-wrapper" style={{
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -61,7 +61,7 @@ const GaugeMeter = ({ score = 78.5, size = 260, title = 'Chỉ số Sẵn sàng 
         {title}
       </div>
 
-      <svg width={size} height={size * 0.58} viewBox="0 0 260 150">
+      <svg width={size} height={size * 0.58} viewBox="0 0 260 150" style={{ width: '100%', maxWidth: `${size}px`, height: 'auto' }}>
         <defs>
           <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#EF4444" />

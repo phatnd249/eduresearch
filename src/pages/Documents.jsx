@@ -136,15 +136,17 @@ const Documents = () => {
           <p style={{ color: 'var(--text-muted)' }}>Quản lý tài liệu nghiên cứu, thang đo chuẩn và báo cáo khoa học</p>
         </div>
         {currentUser?.role !== 'viewer' && (
-          <button className="btn btn-primary" onClick={handleOpenUpload}>
-            <Upload size={18} />
-            Upload tài liệu
-          </button>
+          <div className="page-header-actions">
+            <button className="btn btn-primary" onClick={handleOpenUpload} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Upload size={18} />
+              Upload tài liệu
+            </button>
+          </div>
         )}
       </div>
 
-      <div className="card" style={{ marginBottom: '2rem', padding: '1rem', display: 'flex', gap: '1rem' }}>
-        <div style={{ flex: 1, position: 'relative' }}>
+      <div className="card documents-filter-bar" style={{ marginBottom: '2rem', padding: '1rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: '220px', position: 'relative' }}>
           <div style={{ position: 'absolute', top: '50%', left: '1rem', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
             <Search size={18} />
           </div>
@@ -154,15 +156,15 @@ const Documents = () => {
             placeholder="Tìm kiếm theo tên tài liệu..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ paddingLeft: '2.5rem', backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)' }}
+            style={{ paddingLeft: '2.5rem', backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)', width: '100%' }}
           />
         </div>
-        <div style={{ width: '220px' }}>
+        <div style={{ minWidth: '180px' }}>
           <select 
             className="input" 
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            style={{ backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)' }}
+            style={{ backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)', width: '100%' }}
           >
             <option value="">Tất cả phân loại</option>
             <option value="Lý thuyết">Lý thuyết</option>

@@ -152,15 +152,17 @@ const Users = () => {
     <div>
       <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: '', type: 'success' })} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Quản lý người dùng</h1>
           <p style={{ color: 'var(--text-muted)' }}>Phân quyền truy cập và quản lý tài khoản hệ thống</p>
         </div>
-        <button className="btn btn-primary" onClick={handleOpenCreate}>
-          <Plus size={18} />
-          Thêm tài khoản
-        </button>
+        <div className="page-header-actions">
+          <button className="btn btn-primary" onClick={handleOpenCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Plus size={18} />
+            Thêm tài khoản
+          </button>
+        </div>
       </div>
 
       <div className="users-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
@@ -221,8 +223,8 @@ const Users = () => {
                 <th>Họ tên</th>
                 <th>Email</th>
                 <th style={{ textAlign: 'center' }}>Phân quyền</th>
-                <th>Đơn vị công tác</th>
-                <th style={{ textAlign: 'center' }}>Trạng thái</th>
+                <th className="table-hide-mobile">Đơn vị công tác</th>
+                <th className="table-hide-mobile" style={{ textAlign: 'center' }}>Trạng thái</th>
                 <th style={{ textAlign: 'right' }}>Thao tác</th>
               </tr>
             </thead>
@@ -240,8 +242,8 @@ const Users = () => {
                   </td>
                   <td style={{ color: 'var(--text-muted)' }}>{user.email}</td>
                   <td style={{ textAlign: 'center' }}>{getRoleBadge(user.role)}</td>
-                  <td>{user.unit || 'Chưa cập nhật'}</td>
-                  <td style={{ textAlign: 'center' }}>
+                  <td className="table-hide-mobile">{user.unit || 'Chưa cập nhật'}</td>
+                  <td className="table-hide-mobile" style={{ textAlign: 'center' }}>
                     <span className="badge" style={{ backgroundColor: '#D1FAE5', color: '#10B981', border: '1px solid #A7F3D0' }}>
                       Hoạt động
                     </span>

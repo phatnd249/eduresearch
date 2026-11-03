@@ -127,7 +127,7 @@ const Dashboard = () => {
           </p>
         </div>
         {canManage && (
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             <Link to="/clustering" className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
               <Compass size={16} />
               <span>Bản đồ phân cụm</span>
@@ -148,8 +148,8 @@ const Dashboard = () => {
             <div style={{ padding: '0.6rem', backgroundColor: '#EFF6FF', borderRadius: '8px', color: '#1E40AF', display: 'flex', flexShrink: 0 }}>
               <Filter size={20} />
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
                 <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.04em' }}>
                   Phạm vi quan sát dữ liệu bảng hỏi:
                 </span>
@@ -178,7 +178,7 @@ const Dashboard = () => {
           </div>
 
           {/* Direct Shortcuts for Selected Survey */}
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <div className="dashboard-filter-shortcuts" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
             <Link 
               to={selectedSurveyId !== 'all' ? `/analytics?surveyId=${selectedSurveyId}` : '/analytics'} 
               className="btn btn-primary"
@@ -201,7 +201,7 @@ const Dashboard = () => {
       </div>
 
       {/* 4 THẺ THỐNG KÊ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1.25rem', marginBottom: '1.75rem' }}>
         <Link to="/surveys" className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', textDecoration: 'none', padding: '1.25rem' }}>
           <div style={{ padding: '0.85rem', backgroundColor: '#EFF6FF', borderRadius: 'var(--radius-lg)', color: '#3B82F6' }}>
             <ClipboardList size={28} />
@@ -428,7 +428,7 @@ const Dashboard = () => {
       {/* THAO TÁC NHANH VÀO 4 KHÔNG GIAN SẢN PHẨM */}
       <div className="card" style={{ padding: '1.25rem' }}>
         <h3 style={{ fontSize: '1.05rem', fontWeight: 'bold', marginBottom: '1rem' }}>Không gian nghiên cứu &amp; Kết xuất sản phẩm</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1rem' }}>
           
           <Link to={isAllSurveys ? '/analytics' : `/analytics?surveyId=${selectedSurvey?.id || selectedSurveyId}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: 'var(--radius-md)', border: '1px solid #BFDBFE', textDecoration: 'none', color: 'inherit' }}>
             <div>

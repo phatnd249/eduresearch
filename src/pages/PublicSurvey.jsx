@@ -309,7 +309,7 @@ const PublicSurvey = () => {
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
           {publicSurveysList.map((s) => (
             <div key={s.id} className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.5rem', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-lg)' }}>
               <div>
@@ -460,7 +460,7 @@ const PublicSurvey = () => {
       {/* BƯỚC 1: THÔNG TIN CHUNG & ĐỊNH DANH TRƯỜNG / ĐƠN VỊ */}
       {/* ========================================================= */}
       {step === 1 ? (
-        <form onSubmit={handleNextStep} className="card" style={{ padding: '2rem' }}>
+        <form onSubmit={handleNextStep} className="card public-survey-card" style={{ padding: '2rem' }}>
           <div style={{ marginBottom: '1.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>Phần I: Thông tin chung &amp; Định danh đơn vị</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
@@ -687,7 +687,7 @@ const PublicSurvey = () => {
           )}
 
           {/* NÚT ĐIỀU HƯỚNG */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem' }}>
+          <div className="public-survey-nav" style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--border-color)', paddingTop: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
             <button type="button" className="btn btn-outline" onClick={() => setStep(1)} disabled={loading}>
               <ArrowLeft size={18} />
               Quay lại thông tin chung

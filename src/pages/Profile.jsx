@@ -165,8 +165,8 @@ const Profile = () => {
       </div>
 
       {/* BANNER THÔNG TIN NGƯỜI DÙNG */}
-      <div className="card" style={{ padding: '2rem', marginBottom: '2rem', background: 'linear-gradient(to right, #FFFFFF, #F8FAFC)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+      <div className="card profile-banner" style={{ padding: '2rem', marginBottom: '2rem', background: 'linear-gradient(to right, #FFFFFF, #F8FAFC)' }}>
+        <div className="profile-banner-inner" style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
           <div style={{
             width: '84px',
             height: '84px',
@@ -178,12 +178,13 @@ const Profile = () => {
             justifyContent: 'center',
             fontSize: '2.25rem',
             fontWeight: 'bold',
-            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)'
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)',
+            flexShrink: 0
           }}>
             {(formData.name || 'U').charAt(0).toUpperCase()}
           </div>
 
-          <div style={{ flex: 1, minWidth: '240px' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
               <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>{formData.name || 'Người dùng'}</h2>
               <span style={{
@@ -199,7 +200,7 @@ const Profile = () => {
               </span>
             </div>
 
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                 <Mail size={16} />
                 <span>{formData.email}</span>
@@ -218,7 +219,7 @@ const Profile = () => {
       </div>
 
       {/* TABS ĐIỀU HƯỚNG */}
-      <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
         <button
           type="button"
           onClick={() => setActiveTab('info')}

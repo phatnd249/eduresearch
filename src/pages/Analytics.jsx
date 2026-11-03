@@ -602,7 +602,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
           <button 
             className="btn btn-outline"
             onClick={handleSeedResponses}
@@ -631,7 +631,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
           
           {/* Survey Selector */}
-          <div style={{ flex: '1', minWidth: '320px' }}>
+          <div style={{ flex: '1', minWidth: 0, width: '100%' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.825rem', fontWeight: '600', marginBottom: '0.35rem', color: 'var(--text-muted)' }}>
               <span>CHỌN BỘ KHẢO SÁT CẦN PHÂN TÍCH:</span>
               {selectedSurvey && (
@@ -855,7 +855,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
       })()}
 
       {/* 5-STAGE STEP PROGRESS PIPELINE BAR */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+      <div className="analytics-pipeline-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
         {STAGES.map(stage => {
           const Icon = stage.icon;
           const isActive = activeStage === stage.id;
@@ -916,7 +916,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
             <SkeletonStatCard />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '1.5rem' }}>
+          <div className="analytics-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.5rem' }}>
             <SkeletonChart height="300px" />
             <SkeletonChart height="300px" />
           </div>
@@ -1080,7 +1080,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
               ) : (
                 <>
               {/* Cronbach Alpha Cards & Chart */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+              <div className="analytics-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
                 <div className="card" style={{ padding: '1.25rem' }}>
                   <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <ShieldCheck size={18} color="var(--primary)" />
@@ -1579,7 +1579,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
               </div>
 
               {/* Machine Learning Benchmark & SHAP */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+              <div className="analytics-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
                 <div className="card" style={{ padding: '1.25rem' }}>
                   <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <Cpu size={18} color="var(--primary)" />
@@ -1788,7 +1788,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
           {activeStage === 5 && (
             <div style={{ animation: 'fadeIn 0.25s ease' }}>
               {/* Sentiment & Word Cloud */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+              <div className="analytics-grid-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
                 
                 {/* Sentiment Distribution */}
                 <div className="card" style={{ padding: '1.25rem' }}>

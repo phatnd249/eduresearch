@@ -81,7 +81,7 @@ const Clustering = () => {
             <Skeleton width="320px" height="2rem" style={{ marginBottom: '0.5rem' }} />
             <Skeleton width="480px" height="1rem" />
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem' }}>
             <Skeleton width="220px" height="2.5rem" borderRadius="var(--radius-md)" />
             <Skeleton width="130px" height="2.5rem" borderRadius="var(--radius-md)" />
           </div>
@@ -179,7 +179,7 @@ const Clustering = () => {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem' }}>
           <Link to={`/analytics?surveyId=${selectedSurveyId}`} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem' }}>
             <Sparkles size={16} />
             <span>Xem Báo cáo Đa biến APA 7</span>
@@ -191,7 +191,7 @@ const Clustering = () => {
       <div className="card" style={{ marginBottom: '1.5rem', padding: '1.25rem', border: '1px solid #E2E8F0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
           
-          <div style={{ flex: '1', minWidth: '320px' }}>
+          <div style={{ flex: '1', minWidth: 0, width: '100%' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', marginBottom: '0.35rem', color: 'var(--text-muted)' }}>
               CHỌN BỘ KHẢO SÁT CẦN ĐỊNH VỊ BẢN ĐỒ PHÂN CỤM:
             </label>
@@ -209,13 +209,13 @@ const Clustering = () => {
             </select>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="clustering-filter-cluster" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '0.825rem', fontWeight: '600', color: 'var(--text-muted)' }}>
               Lọc theo Cụm:
             </span>
             <select 
               className="input"
-              style={{ width: '220px', backgroundColor: '#F8FAFC' }}
+              style={{ backgroundColor: '#F8FAFC' }}
               value={selectedClusterFilter}
               onChange={(e) => setSelectedClusterFilter(e.target.value)}
             >
@@ -290,7 +290,7 @@ const Clustering = () => {
             </p>
           </div>
           
-          <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', fontWeight: '600' }}>
+          <div className="clustering-legend" style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem', fontWeight: '600', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#10B981' }}>
               <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
               Tiên phong (AT &ge; 80)
@@ -306,7 +306,7 @@ const Clustering = () => {
           </div>
         </div>
 
-        <div style={{ height: '420px', width: '100%' }}>
+        <div className="clustering-chart-container" style={{ height: '420px', width: '100%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 20, right: 30, bottom: 25, left: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />

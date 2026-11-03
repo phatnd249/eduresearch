@@ -420,7 +420,7 @@ const Responses = () => {
           <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>Phản hồi khảo sát</h1>
           <p style={{ color: 'var(--text-muted)' }}>Dữ liệu phiếu thu thập trực tuyến theo trường/đơn vị &amp; Quản lý làm sạch dữ liệu</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="responses-filter-toolbar page-toolbar" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <select 
             className="input select-filter" 
             style={{ backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)', minWidth: '220px' }}
@@ -738,9 +738,9 @@ const Responses = () => {
                       <th>Trường / Cơ sở</th>
                       <th>Đối tượng</th>
                       <th>Đơn vị</th>
-                      <th>Giới tính</th>
-                      <th>Thời gian hoàn thành</th>
-                      <th>Ngày gửi</th>
+                      <th className="table-hide-mobile">Giới tính</th>
+                      <th className="table-hide-mobile">Thời gian hoàn thành</th>
+                      <th className="table-hide-mobile">Ngày gửi</th>
                       <th>Trạng thái</th>
                       <th style={{ textAlign: 'right' }}>Thao tác</th>
                     </tr>
@@ -765,9 +765,9 @@ const Responses = () => {
                         </td>
                         <td style={{ fontWeight: '600' }}>{res.role}</td>
                         <td>{res.unit}</td>
-                        <td>{res.gender}</td>
-                        <td style={{ color: 'var(--text-muted)' }}>{res.time_taken}</td>
-                        <td style={{ color: 'var(--text-muted)' }}>{formatDisplayDate(res.date)}</td>
+                        <td className="table-hide-mobile">{res.gender}</td>
+                        <td className="table-hide-mobile" style={{ color: 'var(--text-muted)' }}>{res.time_taken}</td>
+                        <td className="table-hide-mobile" style={{ color: 'var(--text-muted)' }}>{formatDisplayDate(res.date)}</td>
                         <td>{getStatusBadge(res.status)}</td>
                         <td style={{ textAlign: 'right' }}>
                           <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', alignItems: 'center' }}>
@@ -812,7 +812,7 @@ const Responses = () => {
               </button>
             </div>
             <div className="modal-body">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+              <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.25rem' }}>Trường / Cơ sở đào tạo</div>
                   <div style={{ fontWeight: '700', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>

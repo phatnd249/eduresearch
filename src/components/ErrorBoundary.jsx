@@ -47,7 +47,7 @@ class ErrorBoundary extends React.Component {
           <p style={{ color: 'var(--text-muted)', maxWidth: '420px', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
             Hệ thống gặp sự cố tạm thời khi vẽ giao diện. Vui lòng thử tải lại trang hoặc đăng nhập lại.
           </p>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button
               onClick={this.handleReload}
               className="btn btn-primary"

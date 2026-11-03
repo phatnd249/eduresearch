@@ -605,7 +605,7 @@ const Surveys = () => {
             Quản trị 4 bộ câu hỏi theo chức vụ, định danh theo trường/đơn vị và khai báo giả thuyết mô hình SEM
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div className="page-header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <button 
             type="button"
             className="btn btn-outline" 
@@ -636,7 +636,7 @@ const Surveys = () => {
       </div>
 
       {/* THANH BỘ LỌC ĐỊNH DANH THEO TRƯỜNG & CHỨC VỤ */}
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: 'white', padding: '0.875rem 1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+      <div className="surveys-filter-bar" style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: 'white', padding: '0.875rem 1.25rem', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-color)', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.875rem', fontWeight: '600' }}>
           <Filter size={16} /> Bộ lọc:
         </div>
@@ -694,9 +694,9 @@ const Surveys = () => {
                   <th>Tiêu đề &amp; Đơn vị định danh</th>
                   <th>Đối tượng chức vụ</th>
                   <th>Trạng thái</th>
-                  <th>Thang đo</th>
+                  <th className="table-hide-mobile">Thang đo</th>
                   <th>Tiến độ mẫu (N)</th>
-                  <th>Biến nghiên cứu</th>
+                  <th className="table-hide-mobile">Biến nghiên cứu</th>
                   <th style={{ textAlign: 'right' }}>Thao tác</th>
                 </tr>
               </thead>
@@ -729,9 +729,9 @@ const Surveys = () => {
                   <th>Tiêu đề &amp; Đơn vị định danh</th>
                   <th>Đối tượng chức vụ</th>
                   <th>Trạng thái</th>
-                  <th>Thang đo</th>
+                  <th className="table-hide-mobile">Thang đo</th>
                   <th>Tiến độ mẫu (N)</th>
-                  <th>Biến nghiên cứu</th>
+                  <th className="table-hide-mobile">Biến nghiên cứu</th>
                   <th style={{ textAlign: 'right' }}>Thao tác</th>
                 </tr>
               </thead>
@@ -763,7 +763,7 @@ const Surveys = () => {
                         {getStatusBadge(survey.status)}
                       </button>
                     </td>
-                    <td>
+                    <td className="table-hide-mobile">
                       <span style={{ fontSize: '0.75rem', backgroundColor: '#EFF6FF', color: '#3B82F6', padding: '0.25rem 0.5rem', borderRadius: '4px', fontWeight: '500' }}>
                         {survey.scale}
                       </span>
@@ -788,7 +788,7 @@ const Surveys = () => {
                         ></div>
                       </div>
                     </td>
-                    <td>
+                    <td className="table-hide-mobile">
                       <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
                         {Array.isArray(survey.variables) && survey.variables.map(v => (
                           <span key={v} style={{ fontSize: '0.65rem', border: '1px solid var(--border-color)', borderRadius: '3px', padding: '0.1rem 0.3rem', color: '#475569', backgroundColor: '#F8FAFC', fontWeight: '600' }}>
@@ -925,7 +925,7 @@ const Surveys = () => {
                     <Sparkles size={16} color="var(--primary)" />
                     Bước 1: Chọn Bộ câu hỏi chuẩn hóa theo Chức vụ / Đối tượng:
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                  <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
                     {Object.keys(ROLE_QUESTIONNAIRES).map((roleKey) => {
                       const tmpl = ROLE_QUESTIONNAIRES[roleKey];
                       const isSelected = selectedRoleTemplate === roleKey;
@@ -1012,7 +1012,7 @@ const Surveys = () => {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid-3col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                   <div className="form-group">
                     <label className="form-label">Thang đo đo lường</label>
                     <select 
@@ -1131,7 +1131,7 @@ const Surveys = () => {
                   />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="form-group">
                     <label className="form-label">Nhóm chức vụ / Đối tượng</label>
                     <select
@@ -1158,7 +1158,7 @@ const Surveys = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="form-group">
                     <label className="form-label">Thang đo đo lường</label>
                     <select 
@@ -1346,7 +1346,7 @@ const Surveys = () => {
                     <span style={{ fontWeight: '600', fontSize: '0.85rem', display: 'block', marginBottom: '0.75rem' }}>
                       Thêm câu hỏi tùy chỉnh mới:
                     </span>
-                    <div style={{ display: 'grid', gridTemplateColumns: '110px 140px 100px 1fr auto', gap: '0.5rem', alignItems: 'center' }}>
+                    <div className="question-add-grid" style={{ display: 'grid', gridTemplateColumns: '110px 140px 100px 1fr auto', gap: '0.5rem', alignItems: 'center' }}>
                       <select 
                         className="input" 
                         value={newQuestionVar}
@@ -1611,7 +1611,7 @@ const Surveys = () => {
 
               {qrCodeDataUrl && (
                 <div style={{ padding: '1rem', backgroundColor: 'white', borderRadius: '12px', border: '2px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', marginBottom: '1.25rem' }}>
-                  <img src={qrCodeDataUrl} alt="Mã QR Khảo sát" style={{ width: '220px', height: '220px', display: 'block' }} />
+                  <img src={qrCodeDataUrl} alt="Mã QR Khảo sát" style={{ width: '220px', height: '220px', maxWidth: '100%', display: 'block' }} />
                 </div>
               )}
 
