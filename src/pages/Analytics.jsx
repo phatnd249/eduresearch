@@ -1105,7 +1105,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
                     Kiểm định KMO &amp; Bartlett's Test (EFA Điều Kiện)
                   </h3>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <div className="analytics-kmo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                     <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.75rem', color: '#1E40AF', fontWeight: '600' }}>HỆ SỐ KMO (Yêu cầu &gt; 0.5)</div>
                       <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#1E40AF', margin: '0.25rem 0' }}>
@@ -1385,7 +1385,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
               </div>
 
               {/* SẢN PHẨM 1 & 2: GAUGE METER & CLUSTERING PROFILING */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1fr) 2fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
+              <div className="analytics-gauge-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1fr) 2fr', gap: '1.25rem', marginBottom: '1.5rem' }}>
                 {/* Gauge Meter Card */}
                 <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
@@ -1428,7 +1428,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Thang đo Likert 1 - 5</span>
                   </div>
 
-                  <div style={{ 
+                  <div className="analytics-factors-grid" style={{ 
                     display: 'grid', 
                     gridTemplateColumns: `repeat(${analysisData.khau3_descriptive?.descriptiveTable?.length || 5}, 1fr)`, 
                     gap: '0.5rem', 
@@ -1711,7 +1711,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
                   }
 
                   return (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 3fr) 2fr', gap: '1.5rem', alignItems: 'center' }}>
+                    <div className="analytics-sim-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 3fr) 2fr', gap: '1.5rem', alignItems: 'center' }}>
                       {/* Sliders Column */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                         {sliderConfigs.map(slider => (
@@ -1800,7 +1800,7 @@ ${(khau5_qualitative.quotesByRole?.students || []).slice(0, 2).map(q => `
                     Trích xuất từ <b>{analysisData.khau1_cleaning?.validResponses ?? analysisData.khau1_cleaning?.cleanCount ?? 0} phiếu khảo sát hợp lệ</b> (trên tổng số {analysisData.khau1_cleaning?.totalResponses ?? analysisData.khau1_cleaning?.rawCount ?? 0} phiếu thu thập). Ghi nhận phản hồi từ <b>{analysisData.khau5_qualitative?.sentimentStats?.respondentsCount || analysisData.khau1_cleaning?.cleanCount || 0} người tham gia</b> qua {analysisData.khau5_qualitative?.sentimentStats?.openQuestionsCount || 2} câu hỏi mở &rarr; Tổng cộng: <b>{analysisData.khau5_qualitative?.sentimentStats?.total || 0} lượt câu trả lời tự luận</b> ({analysisData.khau5_qualitative?.sentimentStats?.barrierCount || 0} ý kiến rào cản + {analysisData.khau5_qualitative?.sentimentStats?.solutionCount || 0} ý kiến đề xuất).
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '0.85rem' }}>
+                  <div className="analytics-sentiment-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '0.85rem' }}>
                     <div style={{ padding: '0.75rem', backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.725rem', color: '#166534', fontWeight: '700', textTransform: 'uppercase' }}>ĐỀ XUẤT &amp; SÁNG KIẾN</div>
                       <div style={{ fontSize: '1.35rem', fontWeight: 'bold', color: '#166534', margin: '0.2rem 0' }}>

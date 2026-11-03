@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, FileText, Users, PieChart, Database, FileBox, LogOut, User, Compass } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, PieChart, Database, FileBox, LogOut, User, Compass, X } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen = false, onClose }) => {
   const { currentUser, logout } = useAuth();
   
   const navItems = [
@@ -18,37 +18,33 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="sidebar" style={{ 
-      width: '260px', 
-      backgroundColor: 'var(--bg-surface)', 
-      borderRight: '1px solid var(--border-color)',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      position: 'fixed'
-    }}>
-      <div className="sidebar-header" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <div style={{ width: '32px', height: '32px', backgroundColor: 'var(--primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>ER</div>
+    <aside className={`sidebar ${isOpen ? 'is-open' : ''}`}>
+      <div className="sidebar-header">
+        <div className="sidebar-logo">ER</div>
         <div>
-          <h2 style={{ fontSize: '1.125rem', fontWeight: 'bold', margin: 0 }}>EduResearch</h2>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>Hệ thống nghiên cứu</p>
+          <h2 className="sidebar-title">EduResearch</h2>
+          <p className="sidebar-subtitle">Hệ thống nghiên cứu</p>
         </div>
+        <button type="button" className="sidebar-close-btn" aria-label="Đóng menu" onClick={onClose}>
+          <X size={20} />
+        </button>
       </div>
       
-      <div className="sidebar-menu" style={{ padding: '1rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-        <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem', paddingLeft: '0.75rem' }}>
+      <nav className="sidebar-menu">
+        <div className="sidebar-group-label">
           Tổng quan
         </div>
-        {navItems.filter(item => item.roles.includes(currentUser.role)).map((item, index) => {
+        {navItems.filter(item => item.roles.includes(currentUser.role)).map((item) => {
           if (item.name === 'Bảng hỏi khảo sát') {
              return (
                <React.Fragment key="group-research">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: '1rem', marginBottom: '0.5rem', paddingLeft: '0.75rem' }}>
+                  <div className="sidebar-group-label" style={{ marginTop: '1rem' }}>
                     Nghiên cứu
                   </div>
                   <NavLink 
                     to={item.path} 
                     className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={onClose}
                   >
                     {item.icon}
                     <span>{item.name}</span>
@@ -59,12 +55,13 @@ const Sidebar = () => {
           if (item.name === 'Người dùng') {
              return (
                <React.Fragment key="group-admin">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: '1rem', marginBottom: '0.5rem', paddingLeft: '0.75rem' }}>
+                  <div className="sidebar-group-label" style={{ marginTop: '1rem' }}>
                     Quản trị
                   </div>
                   <NavLink 
                     to={item.path} 
                     className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={onClose}
                   >
                     {item.icon}
                     <span>{item.name}</span>
@@ -77,27 +74,28 @@ const Sidebar = () => {
               key={item.path}
               to={item.path} 
               className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+              onClick={onClose}
             >
               {item.icon}
               <span>{item.name}</span>
             </NavLink>
           );
         })}
-      </div>
+      </nav>
 
-      {/* User Info & Logout */}
-      <div style={{ padding: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
+      <div className="sidebar-footer">
         <NavLink 
           to="/profile"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', textDecoration: 'none', color: 'inherit', padding: '0.25rem', borderRadius: 'var(--radius-md)', transition: 'background-color 0.2s' }}
+          className="sidebar-user"
           title="Xem hồ sơ & Đổi mật khẩu"
+          onClick={onClose}
         >
-          <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+          <div className="sidebar-user-avatar">
             {(currentUser?.name || 'U').substring(0,2).toUpperCase()}
           </div>
-          <div style={{ flex: 1, overflow: 'hidden' }}>
-            <div style={{ fontSize: '0.875rem', fontWeight: 'bold', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{currentUser?.name || 'Người dùng'}</div>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{currentUser?.role} • Hồ sơ</div>
+          <div className="sidebar-user-info">
+            <div className="sidebar-user-name">{currentUser?.name || 'Người dùng'}</div>
+            <div className="sidebar-user-role">{currentUser?.role} • Hồ sơ</div>
           </div>
         </NavLink>
         <button 
@@ -109,7 +107,7 @@ const Sidebar = () => {
           Đăng xuất
         </button>
       </div>
-    </div>
+    </aside>
   );
 };
 

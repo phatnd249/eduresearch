@@ -487,7 +487,7 @@ const PublicSurvey = () => {
             </div>
 
             {/* KHOA / PHÒNG / BAN */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+            <div className="survey-info-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
               <div>
                 <label className="form-label" style={{ fontWeight: '700' }}>Khoa / Phòng / Ban / Lớp công tác *</label>
                 <input
@@ -622,7 +622,7 @@ const PublicSurvey = () => {
                     </div>
 
                     {/* LƯỚI NÚT LIKERT 5 MỨC ĐỘ */}
-                    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${scaleOptions.length}, 1fr)`, gap: '0.5rem' }}>
+                    <div className={`likert-scale likert-scale-${scaleOptions.length}`} style={{ display: 'grid', gridTemplateColumns: `repeat(${scaleOptions.length}, 1fr)`, gap: '0.5rem' }}>
                       {scaleOptions.map((opt) => {
                         const isChosen = selectedVal === opt.value;
                         return (

@@ -422,7 +422,7 @@ const Responses = () => {
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <select 
-            className="input" 
+            className="input select-filter" 
             style={{ backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)', minWidth: '220px' }}
             value={selectedSurveyId}
             onChange={(e) => setSelectedSurveyId(e.target.value)}
@@ -437,7 +437,7 @@ const Responses = () => {
 
           {/* LỌC THEO TRƯỜNG / CƠ SỞ */}
           <select 
-            className="input"
+            className="input select-filter"
             style={{ backgroundColor: '#F9FAFB', border: '1px solid var(--border-color)', minWidth: '180px' }}
             value={institutionFilter}
             onChange={(e) => setInstitutionFilter(e.target.value)}
@@ -537,14 +537,14 @@ const Responses = () => {
       {loading ? (
         <div style={{ animation: 'fadeIn 0.3s ease' }}>
           {/* 3 Stat Cards Skeleton */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+          <div className="responses-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
             <SkeletonStatCard />
             <SkeletonStatCard />
             <SkeletonStatCard />
           </div>
 
           {/* 2 Charts Skeleton */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', marginBottom: '2rem' }}>
+          <div className="responses-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', marginBottom: '2rem' }}>
             <SkeletonChart height="240px" />
             <SkeletonChart height="240px" />
           </div>
@@ -574,7 +574,7 @@ const Responses = () => {
         </div>
       ) : (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
+          <div className="responses-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2rem' }}>
             <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.5rem' }}>
               <div style={{ padding: '1rem', backgroundColor: '#EFF6FF', borderRadius: 'var(--radius-lg)', color: '#3B82F6' }}>
                 <MessageSquare size={32} />
@@ -607,7 +607,7 @@ const Responses = () => {
           </div>
 
           {data.list.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div className="responses-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', marginBottom: '2rem' }}>
               <div className="card">
                 <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1.5rem', textAlign: 'center' }}>Phân bố Giới tính</h3>
                 <div style={{ height: '240px' }}>

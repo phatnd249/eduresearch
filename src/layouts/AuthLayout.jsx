@@ -3,23 +3,8 @@ import { Outlet } from 'react-router-dom';
 
 const AuthLayout = () => {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center', 
-      backgroundColor: '#F3F4F6',
-      backgroundImage: 'radial-gradient(#E5E7EB 1px, transparent 1px)',
-      backgroundSize: '20px 20px'
-    }}>
-      <div style={{ 
-        width: '100%', 
-        maxWidth: '400px', 
-        padding: '2.5rem', 
-        backgroundColor: 'var(--bg-surface)', 
-        borderRadius: 'var(--radius-xl)', 
-        boxShadow: 'var(--shadow-lg)' 
-      }}>
+    <div className="auth-page">
+      <div className="auth-card">
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ 
             width: '48px', 

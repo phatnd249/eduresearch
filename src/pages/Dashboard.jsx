@@ -142,9 +142,9 @@ const Dashboard = () => {
 
       {/* THANH CHỌN NHANH BẢNG HỎI KHẢO SÁT */}
       <div className="card" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', border: '1px solid #CBD5E1', backgroundColor: '#F8FAFC' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+        <div className="dashboard-filter-bar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: '320px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
             <div style={{ padding: '0.6rem', backgroundColor: '#EFF6FF', borderRadius: '8px', color: '#1E40AF', display: 'flex', flexShrink: 0 }}>
               <Filter size={20} />
             </div>
@@ -250,7 +250,7 @@ const Dashboard = () => {
       </div>
 
       {/* SẢN PHẨM 1: ĐỒNG HỒ ĐO GAUGE METER & BIỂU ĐỒ XU HƯỚNG */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 2fr', gap: '1.5rem', marginBottom: '1.75rem' }}>
+      <div className="dashboard-gauge-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 2fr', gap: '1.5rem', marginBottom: '1.75rem' }}>
         
         {/* ĐỒNG HỒ ĐO GAUGE METER */}
         <div className="card" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -300,7 +300,7 @@ const Dashboard = () => {
       </div>
 
       {/* LƯỚI PHÂN BỐ ĐỐI TƯỢNG VÀ TIẾN ĐỘ THU MẪU */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1.4fr) 1fr', gap: '1.5rem', marginBottom: '1.75rem' }}>
+      <div className="dashboard-pie-row" style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 1.4fr) 1fr', gap: '1.5rem', marginBottom: '1.75rem' }}>
         
         {/* ĐỐI TƯỢNG KHẢO SÁT */}
         <div className="card" style={{ padding: '1.25rem' }}>
@@ -323,7 +323,7 @@ const Dashboard = () => {
               Chưa có dữ liệu phản hồi cho phạm vi này
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(180px, 1fr) 1.4fr', gap: '1rem', alignItems: 'center' }}>
+            <div className="dashboard-donut-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(180px, 1fr) 1.4fr', gap: '1rem', alignItems: 'center' }}>
               {/* Donut Chart */}
               <div style={{ position: 'relative', height: '220px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ResponsiveContainer width="100%" height="100%">
