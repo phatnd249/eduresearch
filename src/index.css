@@ -1007,11 +1007,22 @@ button[disabled],
 @media (max-width: 768px) {
   .hide-on-mobile { display: none !important; }
 
-  .dashboard-header { padding: 0 0.75rem 0 0.5rem; }
+  .dashboard-header { 
+    padding: 0 0.75rem 0 0.5rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 50;
+  }
   .dashboard-brand-crumb { display: none; }
   .dashboard-breadcrumb svg { display: none; }
   .dashboard-page-title { font-size: 0.9rem; }
-  .dashboard-main { padding: 1rem 0.75rem 1.75rem; }
+  .dashboard-main { 
+    padding: 1rem 0.75rem 1.75rem;
+    margin-top: 60px;
+  }
 
   /* Cards & Auth */
   .card { padding: 1rem; }
